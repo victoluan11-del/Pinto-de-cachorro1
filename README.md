@@ -685,7 +685,7 @@ button.MouseButton1Click:Connect(function()
 	end)
 end)
 
---============================================================--==============================
+--==============================
 -- GRAVITY CONTROL (BUTTON + SLIDER)
 --==============================
 
@@ -696,4 +696,80 @@ local GravityValue = workspace.Gravity
 local GravityBtn = Instance.new("TextButton", Container)
 GravityBtn.Size = UDim2.new(0.9, 0, 0, 40)
 GravityBtn.BackgroundColor3 = Color3.fromRGB(80, 0, 130)
-GravityBtn.Te
+GravityBtn.TextColor3 = Color3.new(1,1,1)
+GravityBtn.Font = Enum.Font.GothamBold
+GravityBtn.TextSize = 15
+GravityBtn.Text = "Gravity: OFF"
+GravityBtn.BorderSizePixel = 0
+Instance.new("UICorner", GravityBtn).CornerRadius = UDim.new(0,10)
+
+GravityBtn.MouseButton1Click:Connect(function()
+    GravityEnabled = not GravityEnabled
+    GravityBtn.Text = GravityEnabled and "Gravity: ON" or "Gravity: OFF"
+
+    if not GravityEnabled then
+        workspace.Gravity = 196.2 -- gravidade normal
+    end
+end)
+
+-- SLIDER GRAVIDADE (GRANDE)
+local GravityBox = Instance.new("TextBox", Container)
+GravityBox.Size = UDim2.new(0.9, 0, 0, 45)
+GravityBox.BackgroundColor3 = Color3.fromRGB(50, 0, 90)
+GravityBox.TextColor3 = Color3.new(1,1,1)
+GravityBox.Font = Enum.Font.Gotham
+GravityBox.TextSize = 16
+GravityBox.Text = "Gravity (ex: 50)"
+GravityBox.BorderSizePixel = 0
+Instance.new("UICorner", GravityBox).CornerRadius = UDim.new(0,10)
+
+GravityBox.FocusLost:Connect(function()
+    local val = tonumber(GravityBox.Text)
+    if val then
+        GravityValue = math.clamp(val, 1, 300)
+        if GravityEnabled then
+            workspace.Gravity = GravityValue
+        end
+    end
+end)
+
+--==============================
+-- FIX DEFINITIVO DA GRAVIDADE
+--==============================
+task.spawn(function()
+    while true do
+        task.wait(0.1)
+        if GravityEnabled then
+            workspace.Gravity = GravityValue
+        end
+    end
+end)
+
+-- ================================
+-- AUTO CLICK - BOTÃO NO PAINEL
+-- ================================
+
+local AutoClickBtn = Instance.new("TextButton")
+AutoClickBtn.Size = UDim2.new(0,380,0,45)
+AutoClickBtn.BackgroundColor3 = Color3.fromRGB(85,0,127)
+AutoClickBtn.TextColor3 = Color3.new(1,1,1)
+AutoClickBtn.Font = Enum.Font.SourceSansBold
+AutoClickBtn.TextSize = 18
+AutoClickBtn.Text = "auto click"
+AutoClickBtn.BorderSizePixel = 0
+AutoClickBtn.Parent = Container -- garante que fica dentro do painel
+
+AutoClickBtn.MouseButton1Click:Connect(function()
+	AutoClickBtn.Text = "auto click: loading..."
+	task.spawn(function()
+		local success, err = pcall(function()
+			loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-MOLYN-DEVELOPMENT-63669"))()
+		end)
+		if success then
+			AutoClickBtn.Text = "auto click"
+		else
+			AutoClickBtn.Text = "auto click: error"
+			warn(err)
+		end
+	end)
+end)
